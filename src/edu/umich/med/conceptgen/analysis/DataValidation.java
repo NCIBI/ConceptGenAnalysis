@@ -1,5 +1,7 @@
 package edu.umich.med.conceptgen.analysis;
 
+import java.util.ArrayList;
+
 import org.apache.commons.lang3.math.NumberUtils;
 
 /**
@@ -11,64 +13,122 @@ import org.apache.commons.lang3.math.NumberUtils;
 public class DataValidation
 {
 	private String species;
-	private String threshold; 
-	private String outputType; 
-	private String[] conceptType;
-	private String[] geneIdList;
-	
-	public DataValidation (String species, String[] conceptType, String threshold, String outputType, String[] geneIdList)
+	private String threshold;
+	private String outputType;
+	private ArrayList<String> conceptType;
+	private ArrayList<String> geneIdList;
+	private ArrayList<String> errorReport = new ArrayList<String>();
+
+	public DataValidation(String species, ArrayList<String> conceptType, String threshold, String outputType, ArrayList<String> geneIdList)
 	{
 		this.species = species;
 		this.threshold = threshold;
 		this.outputType = outputType;
 		this.conceptType = conceptType;
 		this.geneIdList = geneIdList;
-		
+
+		// START VALIDATION
+		// -------------------------------------------------------------------------------------------------------------------------------//
+
+		validateSpecies();
+		validateThreshold();
+		validateOutputType();
+		validateGeneId();
+		validateConceptType();
+	}
+
+	private void validateSpecies()
+	{
+		if (species.equals("Human") || species.equals("Mouse") || species.equals("Rat"))
+		{
+		}
+		else
+		{
+			errorReport.add("Invalid Species");
+		}
+	}
+
+	private void validateThreshold()
+	{
+		if(NumberUtils.isNumber(threshold))
+		{
+			errorReport.add("Invalid Threshold Value");
+		}
+	}
+
+	private void validateOutputType()
+	{
+		if (outputType.equals("text") || outputType.equals("json"))
+		{
+			
+		}
+		else
+		{
+			errorReport.add("Invalid Output Value");
+		}
+	}
+
+	private void validateGeneId()
+	{
+
 		boolean valid = true;
-		
-		// START VALIDATION --------------------------------------------------------------------------------------------------------------//
-		
-		if(!validateSpecies())
+		for (String geneId : geneIdList)
 		{
-			valid = false;
+			if (!NumberUtils.isNumber(geneId))
+			{
+				valid = false;
+			}
 		}
 		
-		if(!validateThreshold())
+		if(!valid)
 		{
-			valid = false;
+			errorReport.add("Invalid GeneId");
 		}
-		
-		
 	}
-	
-	private boolean validateSpecies()
+
+	private void validateConceptType()
 	{
-		if(species.equals("Human") || species.equals("Mouse") || species.equals("Rat"))
+		boolean valid = true;
+		ArrayList<String> conceptTypeList = new ArrayList<String>();
+		conceptTypeList.add("Biocarta");
+		conceptTypeList.add("GOBP");
+		conceptTypeList.add("GOCC");
+		conceptTypeList.add("GOMF");
+		conceptTypeList.add("Kegg");
+		conceptTypeList.add("Panther");
+		conceptTypeList.add("pFAM");
+		conceptTypeList.add("MiMI");
+		conceptTypeList.add("MeSH");
+		conceptTypeList.add("OMIM");
+		conceptTypeList.add("Cytoband");
+		conceptTypeList.add("Metabolite");
+		conceptTypeList.add("DrugBank");
+		conceptTypeList.add("TransFac");
+		conceptTypeList.add("miRBase");
+		conceptTypeList.add("ALL");
+		
+		for(String ct : conceptType)
 		{
-			return true;
+			if(!conceptTypeList.contains(ct))
+			{
+				valid = false;
+			}
 		}
-		else
+		
+		if(!valid)
 		{
-			return false;
+			errorReport.add("Invalid Concept Type");
 		}
+		
 	}
-	
-	private boolean validateThreshold()
+
+	public ArrayList<String> getErrorReport()
 	{
-		return NumberUtils.isNumber(threshold);
+		return errorReport;
 	}
-	
-	private boolean validateOutputType()
+
+	public void setErrorReport(ArrayList<String> errorReport)
 	{
-		if(outputType.equals("Human") || outputType.equals("Mouse"))
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		this.errorReport = errorReport;
 	}
-	
-	
 }

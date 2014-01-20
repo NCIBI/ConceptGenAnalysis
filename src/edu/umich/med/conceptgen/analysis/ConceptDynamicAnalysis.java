@@ -53,6 +53,18 @@ public class ConceptDynamicAnalysis {
 	}
 	
 	
+	public ConceptDynamicAnalysis (String conceptName, ArrayList<String> elementList, String owner) throws SQLException
+	{
+		conceptTypeFilter.add("0");
+
+	    db.execQuery(sql.getString("truncateElementTmp"));
+	    
+	    insertElementList(elementList);
+   		conceptId = dataSetup(conceptName, conceptTypeId, owner, String.valueOf(elementList.size()));
+	    engine.analyze(conceptId, conceptTypeFilter);
+	}
+	
+	
 	private String dataSetup(String conceptName, String conceptTypeId, String owner, String elementSize) throws SQLException
 	{
 		//SELECT CONCEPTID******************************************************************************************************************
@@ -87,6 +99,31 @@ public class ConceptDynamicAnalysis {
 		return conceptId;   
 	}
 	
+	
+	private void insertElementList(String[] elementList) throws SQLException
+	{
+		Vector<String> distinctElements = new Vector<String>();
+		Vector<String> queryList = new Vector<String>();
+		String tmp = "";
+		String query = "";
+		
+		for (int i = 0; i < elementList.length; i++)
+		{
+			tmp = elementList[i].trim();
+			if (!(tmp == null || "".equals(tmp.trim())))
+			{
+				if (!distinctElements.contains(tmp))
+				{
+					query = sql.getString("insertElementTmp");
+					query = query.replaceFirst("\\?", tmp);
+					queryList.add(query);
+					distinctElements.add(tmp);				
+				}
+			}
+		}
+		
+		db.batchExecQuery(queryList);
+	}
 	
 	private void insertElementList(ArrayList<String> elementList) throws SQLException
 	{
