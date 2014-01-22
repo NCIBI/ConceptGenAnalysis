@@ -25,7 +25,7 @@ public class QueryExecuter
 	
 	public QueryExecuter()
 	{
-		ResourceBundle db = ResourceBundle.getBundle("org.ncibi.conceptGen.resource.bundle.database");
+		ResourceBundle db = ResourceBundle.getBundle("edu.umich.med.conceptgen.resource.bundle.database");
 		this.url = db.getString("url");
 		this.username = db.getString("username");
 		this.passwd = db.getString("passwd");

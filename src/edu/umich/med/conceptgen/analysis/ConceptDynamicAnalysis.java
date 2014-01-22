@@ -9,7 +9,7 @@ import edu.umich.med.conceptgen.datasource.QueryExecuter;
 
 public class ConceptDynamicAnalysis {
 
-	private ResourceBundle sql = ResourceBundle.getBundle("edu.umich.edu.conceptGen.resource.bundle.sql");
+	private ResourceBundle sql = ResourceBundle.getBundle("edu.umich.med.conceptgen.resource.bundle.sql");
 	private ConceptEngine engine = new ConceptEngine();
 	private ArrayList<String> conceptTypeFilter = new ArrayList<String>();
 	private String dictionaryId = "322";

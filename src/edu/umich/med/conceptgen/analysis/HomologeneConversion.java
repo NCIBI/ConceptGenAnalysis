@@ -15,7 +15,7 @@ import edu.umich.med.conceptgen.util.SqlUtil;
 
 public class HomologeneConversion
 {
-	private ResourceBundle sql = ResourceBundle.getBundle("edu.umich.edu.conceptGen.resource.bundle.sql");
+	private ResourceBundle sql = ResourceBundle.getBundle("edu.umich.med.conceptgen.resource.bundle.sql");
 	private QueryExecuter db = new QueryExecuter();
 
 	public ArrayList<?> run(String species, ArrayList<String> geneIdList) throws SQLException

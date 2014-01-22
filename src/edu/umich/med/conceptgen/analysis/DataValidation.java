@@ -31,10 +31,10 @@ public class DataValidation
 		// -------------------------------------------------------------------------------------------------------------------------------//
 
 		validateSpecies();
-		validateThreshold();
+		//validateThreshold();
 		validateOutputType();
 		validateGeneId();
-		validateConceptType();
+		//validateConceptType();
 	}
 
 	private void validateSpecies()

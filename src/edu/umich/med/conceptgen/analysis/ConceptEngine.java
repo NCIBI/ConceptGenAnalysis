@@ -19,8 +19,8 @@ public class ConceptEngine
 {
 	// Variables Definition
 	// ***********************************************************************************************************************************************
-	private static ResourceBundle sql = ResourceBundle.getBundle("edu.umich.med.resource.bundle.engine");
-	private static ResourceBundle dbParam = ResourceBundle.getBundle("edu.umich.med.resource.bundle.database");
+	private static ResourceBundle sql = ResourceBundle.getBundle("edu.umich.med.conceptgen.resource.bundle.engine");
+	private static ResourceBundle dbParam = ResourceBundle.getBundle("edu.umich.med.conceptgen.resource.bundle.database");
 	private static QueryExecuter db = new QueryExecuter();
 	private  FisherExactTest fisherExactTest = new FisherExactTest();
 	private  HashMap conceptDictionaryList = new HashMap();
