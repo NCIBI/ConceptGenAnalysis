@@ -18,53 +18,22 @@ public class ConceptDynamicAnalysis {
 	
 	private QueryExecuter db = new QueryExecuter();
 	
-	public ConceptDynamicAnalysis (String conceptName, String dictionaryName, ArrayList<String> elementList, ArrayList<String> dictionaryList, String owner) throws SQLException
-	{
-		conceptTypeFilter.add("0");
-
-	    db.execQuery(sql.getString("truncateElementTmp"));
-	    db.execQuery(sql.getString("truncateDictionaryTmp"));
-	    
-	    insertElementList(elementList);
-	    insertDictionaryList(dictionaryList);
-	    	    
-	    //SELECT DICTIONARYID***************************************************************************************************************
-        
-        String query = sql.getString("getNewPrivateDictionaryId");
-    	ArrayList<String> list = db.selectSingleList(query); 
-    	dictionaryId = list.get(0);
-    	
-    	//INSERT DICTIONARY*****************************************************************************************************************
-    	
-    	query = sql.getString("insertPrivateDictionary");
-    	query = query.replaceFirst("\\?", dictionaryId);
-    	query = query.replaceFirst("\\?", conceptName);
-    	query = query.replaceFirst("\\?", owner);   
-   		db.execQuery(query);
-   		
-   		//INSERT DICTIONARY_SET*************************************************************************************************************
-   		
-      	query = sql.getString("insertPrivateDictionarySetGeneId");
-      	query = query.replaceFirst("\\?", dictionaryId);
-   		db.execQuery(query);
-   		
-   		conceptId = dataSetup(conceptName, conceptTypeId, owner, String.valueOf(elementList.size()));
-	    engine.analyze(conceptId, conceptTypeFilter);
-	}
-	
 	
 	public ConceptDynamicAnalysis (String conceptName, ArrayList<String> elementList, String owner) throws SQLException
 	{
 		conceptTypeFilter.add("0");
 
+		System.out.println("Truncating Tables");
 	    db.execQuery(sql.getString("truncateElementTmp"));
 	    db.execQuery(sql.getString("truncateConceptDemand"));
 	    db.execQuery(sql.getString("truncateConceptSetDemand"));
 	    db.execQuery(sql.getString("truncateFisherStatsDemand"));
 	    
-	    
+	    System.out.println("Insert Element Tmp Table");
 	    insertElementList(elementList);
+	    System.out.println("Data Load");
 	    conceptId = dataSetup(conceptName, conceptTypeId, owner, String.valueOf(elementList.size()));
+	    System.out.println("Start Analysis");
 	    engine.analyze(conceptId, conceptTypeFilter);
 	}
 	
@@ -97,32 +66,6 @@ public class ConceptDynamicAnalysis {
 		return conceptId;   
 	}
 	
-	
-	private void insertElementList(String[] elementList) throws SQLException
-	{
-		Vector<String> distinctElements = new Vector<String>();
-		Vector<String> queryList = new Vector<String>();
-		String tmp = "";
-		String query = "";
-		
-		for (int i = 0; i < elementList.length; i++)
-		{
-			tmp = elementList[i].trim();
-			if (!(tmp == null || "".equals(tmp.trim())))
-			{
-				if (!distinctElements.contains(tmp))
-				{
-					query = sql.getString("insertElementTmp");
-					query = query.replaceFirst("\\?", tmp);
-					queryList.add(query);
-					distinctElements.add(tmp);				
-				}
-			}
-		}
-		
-		db.batchExecQuery(queryList);
-	}
-	
 	private void insertElementList(ArrayList<String> elementList) throws SQLException
 	{
 		Vector<String> distinctElements = new Vector<String>();
@@ -147,29 +90,6 @@ public class ConceptDynamicAnalysis {
 		
 		db.batchExecQuery(queryList);
 	}
-	
-	private void insertDictionaryList(ArrayList<String> dictionaryList) throws SQLException
-	{
-		Vector<String> distinctElements = new Vector<String>();
-		Vector<String> queryList = new Vector<String>();
-		String tmp = "";
-		String query = "";
 
-		for (int i = 0; i < dictionaryList.size(); i++)
-		{
-			tmp = (String)dictionaryList.get(i).trim();
-			if (!(tmp == null || "".equals(tmp.trim())))
-			{
-				if (!distinctElements.contains(tmp))
-				{
-					query = sql.getString("insertDictionaryTmp");
-					query = query.replaceFirst("\\?", tmp);
-					queryList.add(query);
-					distinctElements.add(tmp);
-				}
-			}
-		}
-		db.batchExecQuery(queryList);
-	}
 	
 }
