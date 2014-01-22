@@ -15,18 +15,17 @@ import edu.umich.med.conceptgen.statistics.FisherExactTest;
 import edu.umich.med.conceptgen.statistics.Kappa;
 import edu.umich.med.conceptgen.util.TextParser;
 
-public class PrivateConceptEngine
+public class ConceptEngine
 {
 	// Variables Definition
 	// ***********************************************************************************************************************************************
-	private static ResourceBundle sql = ResourceBundle.getBundle("org.ncibi.conceptGen.resource.bundle.privateConceptSQL");
-	private static ResourceBundle dbParam = ResourceBundle.getBundle("org.ncibi.conceptGen.resource.bundle.database");
-	private static QueryExecuter db = new QueryExecuter(dbParam.getString("url"), dbParam.getString("driver"), dbParam.getString("usernamePrivate"),
-			dbParam.getString("passwdPrivate"));
+	private static ResourceBundle sql = ResourceBundle.getBundle("edu.umich.med.resource.bundle.engine");
+	private static ResourceBundle dbParam = ResourceBundle.getBundle("edu.umich.med.resource.bundle.database");
+	private static QueryExecuter db = new QueryExecuter();
 	private  FisherExactTest fisherExactTest = new FisherExactTest();
-	private  Kappa kp = new Kappa();
 	private  HashMap conceptDictionaryList = new HashMap();
 	private  TextParser txtParser = new TextParser();
+	private final String conceptId = "1";
 
 	public void analyze(String conceptId, ArrayList conceptTypeList)
 	{
@@ -37,10 +36,9 @@ public class PrivateConceptEngine
 			System.out.println("Store Data for : " + conceptId);
 			storeData(conceptTypeFilter);
 			System.out.println("Analyze Data");
-			updateData(conceptId, conceptTypeFilter);
-			System.out.println("Run Update");
-			runUpdate(conceptId);		
+			updateData(conceptId, conceptTypeFilter);	
 			System.out.println("Analysis Completed");
+			deleteConcept();
 		} 
 		catch (Exception e)
 		{
@@ -51,22 +49,7 @@ public class PrivateConceptEngine
 
 	public void deleteConcept() throws SQLException
 	{
-		Vector deletedConceptID = getDeletedConceptID();
-
-		for (int i = 0; i < deletedConceptID.size(); i++)
-		{
-			removeConceptId((String) deletedConceptID.get(i));
-		}
-	}
-
-	private  Vector getDeletedConceptID() throws SQLException
-	{
-		return  db.getData(sql.getString("selectDeletedConcepts"));
-	}
-	
-	private  String getOwner(String conceptId) throws SQLException
-	{
-		return db.selectSingleValue(sql.getString("selectOwner").replaceFirst("\\?", conceptId));
+		removeConceptId(conceptId);
 	}
 
 	private  void fisher(String conceptId, HashMap conceptDictionary, HashMap a, HashMap g, HashMap e, HashMap i, boolean isPrivate) throws SQLException
@@ -158,7 +141,6 @@ public class PrivateConceptEngine
 
 				pValue = fisherExactTest.execute(a0, b, c, d);
 				easeScore = fisherExactTest.execute((aEase - 1), b, c, d);
-				kappa = kp.execute(a0, b, c, d);
 
 				if (pValue < 1)
 				{
@@ -204,10 +186,8 @@ public class PrivateConceptEngine
 
 	private  void updateData(String conceptId, String conceptTypeFilter) throws SQLException
 	{
-		String dictionaryId = db.selectSingleValue(sql.getString("selectDictionaryId").replaceFirst("\\?", conceptId));
-		String owner = getOwner(conceptId);
-		HashMap conceptPrivateDictionaryList = db.hashResult(sql.getString("selectAllPrivateConceptDictionaryId").replaceFirst("\\?", owner));		
-		
+		String dictionaryId = "322";
+
 		// *******************************************************************************************************************************************
 		// PUBLIC DATASOURCE
 		
@@ -221,32 +201,6 @@ public class PrivateConceptEngine
 		HashMap i = db.hashResult(sql.getString("calculateI").replaceFirst("\\?", dictionaryId));
 
 		fisher(conceptId, conceptDictionaryList, a, g, e, i, false);
-		
-		// *******************************************************************************************************************************************
-		// PRIVATE DATASOURCE
-		
-		String query1 = sql.getString("calculatePrivateA");
-		query1 = query1.replaceFirst("\\?", conceptId);
-		query1 = query1.replaceFirst("\\?", owner);
-		
-		String query2 = sql.getString("calculatePrivateG");
-		query2 = query2.replaceFirst("\\?", conceptId);
-		query2 = query2.replaceFirst("\\?", owner);
-		
-		String query3 = sql.getString("calculatePrivateE");
-		query3 = query3.replaceFirst("\\?", dictionaryId);
-		query3 = query3.replaceFirst("\\?", owner);
-		
-		String query4 = sql.getString("calculatePrivateI");
-		query4 = query4.replaceFirst("\\?", dictionaryId);
-		query4 = query4.replaceFirst("\\?", owner);	
-			
-		HashMap _a = db.hashResult(query1);
-		HashMap _g = db.hashResult(query2);
-		HashMap _e = db.hashResult(query3);
-		HashMap _i = db.hashResult(query4);
-	
-		fisher(conceptId, conceptPrivateDictionaryList, _a, _g, _e, _i, true);	
 	}
 	
 	private  void storeData(String conceptTypeFilter) throws SQLException
@@ -256,24 +210,10 @@ public class PrivateConceptEngine
 		conceptDictionaryList = db.hashResult(query);		
 	}
 	
-	private  void runUpdate(String conceptID) throws SQLException
-	{
-		String query = sql.getString("updateSAS");
-		query = query.replaceAll("\\?", conceptID);
-		db.execQuery(query);
-		
-		query = sql.getString("updateConceptElementSize");
-		query = query.replaceAll("\\?", conceptID);
-		db.execQuery(query);
-	}
 	
 	private  void removeConceptId(String conceptId) throws SQLException
 	{
-		String query = sql.getString("deleteSAS");
-		query = query.replaceAll("\\?", conceptId);
-		db.execQuery(query);
-		
-		query = sql.getString("deleteConceptSet");
+		String query = sql.getString("deleteConceptSet");
 		query = query.replaceAll("\\?", conceptId);
 		db.execQuery(query);
 		

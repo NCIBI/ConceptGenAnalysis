@@ -52,6 +52,7 @@ public class EnrichmentService
 				new ConceptDynamicAnalysis(conceptName, elementList, owner);
 				
 				
+				
 			}
 			catch (SQLException e)
 			{

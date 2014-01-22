@@ -10,7 +10,7 @@ import edu.umich.med.conceptgen.datasource.QueryExecuter;
 public class ConceptDynamicAnalysis {
 
 	private ResourceBundle sql = ResourceBundle.getBundle("edu.umich.edu.conceptGen.resource.bundle.sql");
-	private PrivateConceptEngine engine = new PrivateConceptEngine();
+	private ConceptEngine engine = new ConceptEngine();
 	private ArrayList<String> conceptTypeFilter = new ArrayList<String>();
 	private String dictionaryId = "322";
 	private String conceptTypeId = "33";
@@ -58,24 +58,26 @@ public class ConceptDynamicAnalysis {
 		conceptTypeFilter.add("0");
 
 	    db.execQuery(sql.getString("truncateElementTmp"));
+	    db.execQuery(sql.getString("truncateConceptDemand"));
+	    db.execQuery(sql.getString("truncateConceptSetDemand"));
+	    db.execQuery(sql.getString("truncateFisherStatsDemand"));
+	    
 	    
 	    insertElementList(elementList);
-   		conceptId = dataSetup(conceptName, conceptTypeId, owner, String.valueOf(elementList.size()));
+	    conceptId = dataSetup(conceptName, conceptTypeId, owner, String.valueOf(elementList.size()));
 	    engine.analyze(conceptId, conceptTypeFilter);
 	}
 	
 	
 	private String dataSetup(String conceptName, String conceptTypeId, String owner, String elementSize) throws SQLException
 	{
-		//SELECT CONCEPTID******************************************************************************************************************
-	    
-	    String query = sql.getString("getNewConceptId");
-	    ArrayList<String> list = db.selectSingleList(query); 
-	    String conceptId = list.get(0);  
+		//SET CONCEPTID******************************************************************************************************************
+
+	    String conceptId = "1";  
 
 	    //INSERT CONCEPT********************************************************************************************************************
 	    
-	    query = sql.getString("insertConcept");
+	    String query = sql.getString("insertConcept");
 	    query = query.replaceFirst("\\?", conceptId);
 	    query = query.replaceFirst("\\?", conceptName);
 	    query = query.replaceFirst("\\?", conceptTypeId);
@@ -89,12 +91,8 @@ public class ConceptDynamicAnalysis {
 	    query = query.replaceFirst("\\?", conceptId);	
 	    db.execQuery(query);
 	      
-	    query = sql.getString("insertStatisticsStatus");
-	    query = query.replaceFirst("\\?", conceptId);
-	    db.execQuery(query);
 	    
 		db.execQuery(sql.getString("truncateElementTmp"));
-		db.execQuery(sql.getString("truncateDictionaryTmp"));
 		
 		return conceptId;   
 	}
