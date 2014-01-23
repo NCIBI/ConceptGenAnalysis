@@ -30,13 +30,15 @@ public class TestServices
 		ArrayList<String> conceptType = new ArrayList<String>();
 		conceptType.add("0");
 		ArrayList<String> elementList = new ArrayList<String>();
-		elementList.add("196792");
-		elementList.add("196860");
-		elementList.add("196872");
-		elementList.add("196883");
-		elementList.add("196913");
-		elementList.add("196951");
-
+		elementList.add("5970");
+		elementList.add("4790");
+		elementList.add("7099");
+		elementList.add("5111");
+		elementList.add("3383");
+		elementList.add("8517");
+		elementList.add("5347");
+		elementList.add("5580");
+		elementList.add("1111");
 		
 		String owner = "anonymous";
 		String conceptName = "conceptTemp";

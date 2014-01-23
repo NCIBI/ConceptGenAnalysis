@@ -40,7 +40,7 @@ public class ConceptDynamicAnalysis {
 	
 	private String dataSetup(String conceptName, String conceptTypeId, String owner, String elementSize) throws SQLException
 	{
-		//SET CONCEPTID******************************************************************************************************************
+		//SET CONCEPTID*********************************************************************************************************************
 
 	    String conceptId = "1";  
 

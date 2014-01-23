@@ -10,7 +10,9 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.ArrayList;
 
+
 import edu.umich.med.conceptgen.datasource.QueryExecuter;
+import edu.umich.med.conceptgen.statistics.FDR;
 import edu.umich.med.conceptgen.statistics.FisherExactTest;
 import edu.umich.med.conceptgen.statistics.Kappa;
 import edu.umich.med.conceptgen.util.TextParser;
@@ -25,6 +27,8 @@ public class ConceptEngine
 	private  FisherExactTest fisherExactTest = new FisherExactTest();
 	private  HashMap conceptDictionaryList = new HashMap();
 	private  TextParser txtParser = new TextParser();
+	private static Kappa kp = new Kappa();
+	private static FDR fdr = new FDR();
 	private final String conceptId = "1";
 
 	public void analyze(String conceptId, ArrayList conceptTypeList)
@@ -37,6 +41,9 @@ public class ConceptEngine
 			storeData(conceptTypeFilter);
 			System.out.println("Analyze Data");
 			updateData(conceptId, conceptTypeFilter);	
+			System.out.println("Analyzing Data: Running FDR");
+			fdr.execute();
+			System.out.println("Analysis complete");
 			System.out.println("Analysis Completed");
 			deleteConcept();
 		} 
@@ -141,6 +148,7 @@ public class ConceptEngine
 
 				pValue = fisherExactTest.execute(a0, b, c, d);
 				easeScore = fisherExactTest.execute((aEase - 1), b, c, d);
+				kappa = kp.execute(a0, b, c, d);
 
 				if (pValue < 1)
 				{
