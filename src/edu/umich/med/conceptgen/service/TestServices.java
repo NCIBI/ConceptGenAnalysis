@@ -50,7 +50,7 @@ public class TestServices
 		
 		/* DATA VALIDATION ---------------------------------------------------------------------------------------------------------------*/
 		
-		DataValidation dv = new DataValidation(species, conceptType, threshold, outputType, elementList);
+		DataValidation dv = new DataValidation(species, conceptType, threshold, elementList);
 		if(dv.getErrorReport().isEmpty())
 		{
 			try

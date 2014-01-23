@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -1163,6 +1164,105 @@ public class QueryExecuter
 			{
 				value = result.getString(1);
 				resultList.add(value);
+			}
+			result.close();
+			result = null;
+			statement.close();
+			statement = null;
+			connection.close();
+			connection = null;
+
+		}
+		catch (Exception e)
+		{
+			System.out.println(e);
+		}
+		finally
+		{
+
+			if (result != null)
+			{
+				try
+				{
+					result.close();
+				}
+				catch (SQLException e)
+				{
+					System.out.println(e);
+				}
+				result = null;
+			}
+			if (statement != null)
+			{
+				try
+				{
+					statement.close();
+				}
+				catch (SQLException e)
+				{
+					System.out.println(e);
+				}
+				statement = null;
+			}
+			if (connection != null)
+			{
+				try
+				{
+					connection.close();
+				}
+				catch (SQLException e)
+				{
+					System.out.println(e);
+				}
+				connection = null;
+			}
+
+		}
+		return resultList;
+	}
+	
+	public ArrayList<ArrayList<String>> selectTableFunction(String query) throws SQLException
+	{
+
+		ArrayList<ArrayList<String>> resultList = new ArrayList<ArrayList<String>>();
+		ArrayList<String> columns = new ArrayList<String>();
+		ArrayList<String> recordList = null;
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet result = null;
+		ResultSetMetaData rmd = null;
+		String value = "";
+
+		try
+		{
+			Class.forName(driver);
+			connection = DriverManager.getConnection(url, username, passwd);
+			statement = connection.createStatement();
+			result = statement.executeQuery(query);
+			int columnCount = rmd.getColumnCount();
+
+			for (int i = 1; i <= columnCount; i++)
+			{
+				columns.add(rmd.getColumnName(i));
+			}
+
+			while (result.next())
+			{
+				recordList = new ArrayList<String>();
+				for (int i = 1; i <= columnCount; i++)
+				{
+					value = result.getString(i);
+					if (value == null)
+					{
+						value = "";
+					}
+					else
+					{
+						value = value.trim();
+					}
+					recordList.add(value);
+				}
+				resultList.add(recordList);
 			}
 			result.close();
 			result = null;

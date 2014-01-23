@@ -14,16 +14,14 @@ public class DataValidation
 {
 	private String species;
 	private String threshold;
-	private String outputType;
 	private ArrayList<String> conceptType;
 	private ArrayList<String> geneIdList;
 	private ArrayList<String> errorReport = new ArrayList<String>();
 
-	public DataValidation(String species, ArrayList<String> conceptType, String threshold, String outputType, ArrayList<String> geneIdList)
+	public DataValidation(String species, ArrayList<String> conceptType, String threshold, ArrayList<String> geneIdList)
 	{
 		this.species = species;
 		this.threshold = threshold;
-		this.outputType = outputType;
 		this.conceptType = conceptType;
 		this.geneIdList = geneIdList;
 
@@ -32,7 +30,6 @@ public class DataValidation
 
 		validateSpecies();
 		//validateThreshold();
-		validateOutputType();
 		validateGeneId();
 		//validateConceptType();
 	}
@@ -53,18 +50,6 @@ public class DataValidation
 		if(NumberUtils.isNumber(threshold))
 		{
 			errorReport.add("Invalid Threshold Value");
-		}
-	}
-
-	private void validateOutputType()
-	{
-		if (outputType.equals("text") || outputType.equals("json"))
-		{
-			
-		}
-		else
-		{
-			errorReport.add("Invalid Output Value");
 		}
 	}
 
